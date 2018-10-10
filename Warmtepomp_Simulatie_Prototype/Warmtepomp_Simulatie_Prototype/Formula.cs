@@ -74,5 +74,29 @@ namespace Warmtepomp_Simulatie_Prototype
         /// <returns>Seasonal Performance Factor</returns>
         public decimal SPF(decimal Qw, decimal Qk, decimal E, decimal G)
         => (Qw + Qk) / (E + G);
+        
+        /// <summary>
+        /// Calculate the power needed to heat up a substance, like air
+        /// m = mass of substance
+        /// c = specific heat
+        /// DeltaT = temp difference (wanted Temp - current Temp)
+        /// </summary>
+        /// <param name="m"></param>
+        /// <param name="c"></param>
+        /// <param name="DeltaT"></param>
+        /// <returns>The amount of power required to heat up substance</returns>
+        public decimal PowerRequirementToHeatUpSubstance(decimal m, decimal c, decimal DeltaT)
+        => (m * c * DeltaT) / 3600000;
+
+        /// <summary>
+        /// Calculate the time needed to heat up a substance, like air
+        /// power = the output of the device used to heat up substance in kW
+        /// requirement = the power needed to heat up substance in kWh
+        /// </summary>
+        /// <param name="power"></param>
+        /// <param name="requirement"></param>
+        /// <returns>time requirement in hours * 3600 (so it will be seconds)</returns>
+        public decimal TimeRequirementToHeatUpSubstance(decimal power, decimal requirement)
+        => (requirement / power) * 3600;
     }
 }
