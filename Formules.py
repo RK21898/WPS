@@ -6,10 +6,11 @@ def WattToJoules(watt):
 
 #Calculate the power requirement for a room using
 #Length, Width and Height in Meters
+#RoomType like dictionary
 #Length * Width * Height * WattPerM2
 #Returns the PowerRequirementForRoom
-def PowerRequirementForRoom(length, width, height, wattPerM2):
-    return length * width * height * wattPerM2
+def PowerRequirementForRoom(length, width, height, roomType):
+    return length * width * height * RoomTypeInformation.get(roomType)
 
 #Calculate the COP coefficient of the heat pump
 #powerOutput / addedPower
@@ -57,12 +58,43 @@ def TimeRequirementToHeatUpSubstance(power, requirement):
 def CelsiusToKelvin(celsius):
     return celsius + 273
 
+#Room Type Information
+#Watts per square meter used to warm a room of x m^3 at
+#a standard of 22 degrees prior to corrections
+#Column 1: Room type
+#Column 2: Watt per m²
+RoomTypeInformation = {
+    "Excellent": 50,
+    "Goed": 60,
+    "Normaal": 70,
+    "Slecht": 80}
+
+#Horizontal Collector Soil Type Information
+#Watts per square meter collected by horizontal collector
+#Column 1: Soil type
+#Column 2: Watt per m²
+HorizontalSoilTypeInformation = {
+    "Droge zanderige bodem": 50,
+    "Goed": 60,
+    "Normaal": 70,
+    "Slecht": 80}
+
+#Vertical Collector Soil Type Information
+#Watts per square meter collected by vertical collector
+#Column 1: Soil type
+#Column 2: Watt per m²
+VerticalSoilTypeInformation = {
+    "Droge zanderige bodem": 50,
+    "Goed": 60,
+    "Normaal": 70,
+    "Slecht": 80}
+
 #Simulation test input values
 roomWidth = 6
 roomLength = 6
 roomHeight = 3
-roomWattPerM2 = 60
-roomPowerRequirement = PowerRequirementForRoom(roomLength, roomWidth, roomHeight, roomWattPerM2)
+roomType = "Normaal" #Excellent/Goed/Normaal/Slecht
+roomPowerRequirement = PowerRequirementForRoom(roomLength, roomWidth, roomHeight, roomType)
 
 startTempC = 18
 desiredTempC = 21
