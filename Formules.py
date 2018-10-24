@@ -4,7 +4,7 @@ def WattToJoules(watt):
     return watt * 1000
 
 def PowerRequirementForRoom(length, width, height, watt):
-    return capacity = length * width * height * watt
+    return length * width * height * watt
 
 def COP(powerOutput, addedPower):
     return powerOutput / addedPower
