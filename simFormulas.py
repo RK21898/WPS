@@ -1,4 +1,8 @@
-import math as m
+"""This Module contains the formulas used to calculate certain
+values used in the simulation heatpumpSim 
+in the process of the program"""
+
+###FUNCTION SECTION###
 
 ##misschien overbodig
 def WattToJoules(watt):
@@ -40,6 +44,11 @@ def SPF(Qw, Qk, E, G):
     G = electric equivalent of natural gas used by the pump system
     #Returns Seasonal Performance Factor"""
     return (Qw + Qk) / (E + G)
+
+def SubstanceMass(m, rho):
+    """True mass in kg of the substance calculated using the 
+    capacity in cubic meters and specific mass of a substance"""
+    return m * rho
 
 ##misschien betere naam voor functie
 def PowerRequiredToHeatSubstance(m, c, DeltaT):
