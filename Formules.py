@@ -50,3 +50,29 @@ def PowerRequirementToHeatUpSubstance(m, c, DeltaT):
 #Returns the time requirement in seconds
 def TimeRequirementToHeatUpSubstance(power, requirement):
     return (requirement / power) * 3600
+
+#Convert temperature in celsius to temperature in kelvin
+#Celsius = degrees in Celsius
+#Returns the degrees in Kelvin
+def CelsiusToKelvin(celsius):
+    return celsius + 273
+
+#Simulation test input values
+roomWidth = 6
+roomLength = 6
+roomHeight = 3
+roomWattPerM2 = 60
+roomPowerRequirement = PowerRequirementForRoom(roomLength, roomWidth, roomHeight, roomWattPerM2)
+
+startTempC = 18
+desiredTempC = 21
+
+
+#Calculations
+startTempK = CelsiusToKelvin(startTempC)
+desiredTempK = CelsiusToKelvin(desiredTempC)
+
+#Print test values
+print('Power Requirement for room:',roomPowerRequirement,'Watt')
+print('Start temp in Kelvin:',startTempK,'K')
+print('Desired temp in Kelvin:',desiredTempK,'K')
