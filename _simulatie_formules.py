@@ -9,8 +9,8 @@ def WattToJoules(watt):
 #RoomType like dictionary
 #Length * Width * Height * WattPerM2
 #Returns the PowerRequirementForRoom
-def PowerRequirementForRoom(length, width, height, roomType):
-    return length * width * height * RoomTypeInformation.get(roomType)
+def PowerRequirementForRoom(length, width, height, InsulationTypeInformation):
+    return length * width * height * InsulationTypeInformation
 
 #Calculate the COP coefficient of the heat pump
 #powerOutput / addedPower
@@ -58,12 +58,12 @@ def TimeRequirementToHeatUpSubstance(power, requirement):
 def CelsiusToKelvin(celsius):
     return celsius + 273
 
-#Room Type Information
+#Insulation Type Information
 #Watts per square meter used to warm a room of x m^3 at
 #a standard of 22 degrees prior to corrections
 #Column 1: Room type
 #Column 2: Watt per m²
-RoomTypeInformation = {
+InsulationTypeInformation = {
     "Excellent": 50,
     "Goed": 60,
     "Normaal": 70,
@@ -88,23 +88,4 @@ VerticalSoilTypeInformation = {
     "Goed": 60,
     "Normaal": 70,
     "Slecht": 80}
-
-#Simulation test input values (change to input funcs)
-roomWidth = 6
-roomLength = 6
-roomHeight = 3
-roomType = "Normaal" #Excellent/Goed/Normaal/Slecht
-roomPowerRequirement = PowerRequirementForRoom(roomLength, roomWidth, roomHeight, roomType)
-
-startTempC = 18 
-desiredTempC = 21 
-
-#Calculations
-startTempK = CelsiusToKelvin(startTempC)
-desiredTempK = CelsiusToKelvin(desiredTempC)
-
-#Print test values
-print('Power Requirement for room:',roomPowerRequirement,'Watt')
-print('Start temp in Kelvin:',startTempK,'K')
-print('Desired temp in Kelvin:',desiredTempK,'K')
 
