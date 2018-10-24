@@ -89,16 +89,15 @@ VerticalSoilTypeInformation = {
     "Normaal": 70,
     "Slecht": 80}
 
-#Simulation test input values
+#Simulation test input values (change to input funcs)
 roomWidth = 6
 roomLength = 6
 roomHeight = 3
 roomType = "Normaal" #Excellent/Goed/Normaal/Slecht
 roomPowerRequirement = PowerRequirementForRoom(roomLength, roomWidth, roomHeight, roomType)
 
-startTempC = 18
-desiredTempC = 21
-
+startTempC = 18 
+desiredTempC = 21 
 
 #Calculations
 startTempK = CelsiusToKelvin(startTempC)
@@ -108,3 +107,4 @@ desiredTempK = CelsiusToKelvin(desiredTempC)
 print('Power Requirement for room:',roomPowerRequirement,'Watt')
 print('Start temp in Kelvin:',startTempK,'K')
 print('Desired temp in Kelvin:',desiredTempK,'K')
+
