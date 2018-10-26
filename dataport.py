@@ -3,17 +3,15 @@ import csv
 
 def importCSV(path):
     with open(path, 'rb') as csvfile:
-        csvReader = csv.reader(csvfile, delimiter=' ', quotechar='|')
-    csvFile = importCSV(path)
-    csvHeaders, csvData = []
-    for column in valreader:
-        csvHeaders.append(column)
-    for row in valreader
+        valReader = csv.reader(csvfile, delimiter=' ', quotechar='|')
+    csvData = []    
+    for row in valReader:
         csvData.append(row)
+    return csvData
 
 def exportCSV(file, path):
     with open(path, 'wb') as csvfile:
-        csvWriter = csv.writer(file, delimiter=' ',
+        csvWriter = csv.writer(csvfile, delimiter=' ',
             quotechar='|', quoting=csv.QUOTE_MINIMAL)
         for row in file:
             csvWriter.writerow(row)
