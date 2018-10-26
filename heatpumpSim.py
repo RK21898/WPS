@@ -19,28 +19,37 @@ floorLength = float(input("Lengte van de vloer in meters: "))
 floorDepth = float(input("Dikte van de vloer in meters: "))
 floorCapacity = floorWidth * floorLength * floorDepth
 print ("De inhoud van de vloer is",floorCapacity,"kubieke meters")
+#insulationType = input("Isolatiekwaliteit van de ruimte\n(slecht/standaard/goed/excellent): ")
+#roomPowerRequirement = f.PowerRequirementForRoom(roomLength, roomWidth, roomHeight, insulationType)
 
 #deltaT 
 print("Temperatuur kan niet hoger dan 35 graden in verband met de vloerverwarming.")
-startTemp = float(input("Voer een begintemperatuur in: "))
-roomDesiredTemp = float(input("Voer een eindtemperatuur in: "))
-roomDeltaT = roomDesiredTemp - startTemp
-floorDesiredTemp = DesiredTemps.get("Desired Temp Floor")
-floorDeltaT = floorDesiredTemp - startTemp
-print("Het temperatuurverschil in de kamer is",roomDeltaT,"graden.")
-print("Het temperatuurverschil in de vloer is",floorDeltaT,"graden.")
+roomStartTemp = float(input("Voer een begintemperatuur voor de kamer in: "))
+roomDesiredTemp = float(input("Voer een eindtemperatuur voor de kamer in: "))
+floorStartTemp = float(input("Voer een begintemperatuur voor de vloer in: "))
+floorDesiredTemp = float(input("Voer een eindtemperatuur voor de vloer in: "))
+roomDeltaT = roomDesiredTemp - roomStartTemp
+floorDeltaT = floorDesiredTemp - floorStartTemp
+print("Het temperatuurverschil in de kamer is",roomDeltaT,"graden.",
+      "\nHet temperatuurverschil in de vloer is",floorDeltaT,"graden.")
 
 print("Berekenen van de hoeveelheid energie benodigd om de vloer en kamer te verwarmen.")
 floorRequirement = f.PowerRequiredToHeatSubstance(
     f.TrueSubstanceMass(floorCapacity,SpecificMass.get("Gewapend Beton")),
-    SpecificHeat.get("Beton"), floorDeltaT
-)
+    SpecificHeat.get("Beton"), floorDeltaT)
 print("De energie benodigd om de vloer te verwarmen is",floorRequirement,"kWh")
 roomRequirement = f.PowerRequiredToHeatSubstance(
     f.TrueSubstanceMass(roomCapacity,SpecificMass.get("Lucht")),
-    SpecificHeat.get("Lucht"), roomDeltaT
-)
+    SpecificHeat.get("Lucht"), roomDeltaT)
 print("De energie benodigd om de kamer te verwarmen is",roomRequirement,"kWh")
+
+print("Individuele tijd berekenen voor de verwarming van vloer en kamer.")
+roomTransition = f.TransititionTime(roomRequirement, (f.HeatTransfer(6,roomCapacity/roomHeight,floorDeltaT)/1000))
+floorTransition = f.TransititionTime(floorRequirement, 3.88)
+print(roomTransition, floorTransition)
+print("Benodigde tijd om de kamer op te warmen:",roomTransition,"uur",
+      "Benodigde tijd om de vloer op te warmen:",floorTransition,"uur")
+
 
 ##tijdsfunctie zodat het lijkt alsof de kamer echt warm wordt > simulatie
 ##van deltaT delen door benodigde tijd = temperatuur increment
