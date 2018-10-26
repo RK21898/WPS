@@ -10,20 +10,18 @@ import time as t
 ###VARIABLE SECTION###
 
 ###FUNCTION SECTION###
-def optimal_realism_transitioning(
-    deltaT, time, startingTemps, desiredTemps, speedup):
-    increment = deltaT / time
+def realism_transitioning(deltaT, time, startingTemps, desiredTempts, speedup):
+    return None
 
-    sFt = startingTemps["Starting Floor Temperature"]
-    sRT = startingTemps["Starting Room Temperature"]
-    dFT = desiredTemps["Desired Floor Temperature"]
-    dRT = desiredTemps["Desired Room Temperature"]
-
-    while sRT < dRT:
-        
-        sRT += increment * speedup
-
-
+###basic bitch oplossing
 ##tijdsfunctie zodat het lijkt alsof de kamer echt warm wordt > simulatie
 ##van deltaT delen door benodigde tijd = temperatuur increment
 ##startTemp + increment totdat desiredTemp is bereikt
+###advanced coolguy oplossing
+##deltaT verkleinen en de berekeningen iedere keer opnieuw uitvoeren,
+##zodat het verwarmen van de vloer invloed heeft op het verwarmen
+##van de kamer vanaf het begin van de simulatie.
+###ultieme baas oplossing
+##pak de advanced coolguy oplossing en laat hierop alle
+##verliezen en winsten uit de omgeving op los voor ultrarealism simulatie
+###EINDE ENZO
