@@ -35,12 +35,12 @@ floorRequirement = f.PowerRequiredToHeatSubstance(
     f.TrueSubstanceMass(floorCapacity,SpecificMass.get("Gewapend Beton")),
     SpecificHeat.get("Beton"), floorDeltaT
 )
-print("De energie benodigd om de vloer te verwarmen is",floorRequirement)
+print("De energie benodigd om de vloer te verwarmen is",floorRequirement,"kWh")
 roomRequirement = f.PowerRequiredToHeatSubstance(
     f.TrueSubstanceMass(roomCapacity,SpecificMass.get("Lucht")),
     SpecificHeat.get("Lucht"), roomDeltaT
 )
-print("De energie benodigd om de kamer te verwarmen is",roomRequirement)
+print("De energie benodigd om de kamer te verwarmen is",roomRequirement,"kWh")
 
 ##tijdsfunctie zodat het lijkt alsof de kamer echt warm wordt > simulatie
 ##van deltaT delen door benodigde tijd = temperatuur increment
