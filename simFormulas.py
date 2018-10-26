@@ -50,6 +50,11 @@ def PowerRequiredToHeatSubstance(m, c, DeltaT):
     Returns the amount of power required to heat up substance"""
     return (m * c * DeltaT) / 3600000
 
+def TrueSubstanceMass(m, rho):
+    """Calculate the true mass of a substance using the capacity in 
+    cubic meters and the specific mass in kilograms per cubic meter"""
+    return m * rho
+
 def TransititionTime(requirement, power):
     """Calculate the time needed to heat up a substance, like air
     Power = the output of the device used to heat up the substance in kW

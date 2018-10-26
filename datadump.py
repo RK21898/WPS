@@ -32,7 +32,8 @@ VerticalSoilTypeInformation = {
 #specific heat of substance in joules per kilo per kelvin
 SpecificHeat = {
     "Lucht":1005,
-    "Water":2060
+    "Water":2060,
+    "Beton":920
 }
 
 #specific mass of substance in kg per cubic meter

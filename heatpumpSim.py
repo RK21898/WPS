@@ -19,8 +19,6 @@ floorLength = float(input("Lengte van de vloer in meters: "))
 floorDepth = float(input("Dikte van de vloer in meters: "))
 floorCapacity = floorWidth * floorLength * floorDepth
 print ("De inhoud van de vloer is",floorCapacity,"kubieke meters")
-#insulationType = input("Isolatiekwaliteit van de ruimte\n(slecht/standaard/goed/excellent): ")
-#roomPowerRequirement = f.PowerRequirementForRoom(roomLength, roomWidth, roomHeight, insulationType)
 
 #deltaT 
 print("Temperatuur kan niet hoger dan 35 graden in verband met de vloerverwarming.")
@@ -31,6 +29,18 @@ floorDesiredTemp = DesiredTemps.get("Desired Temp Floor")
 floorDeltaT = floorDesiredTemp - startTemp
 print("Het temperatuurverschil in de kamer is",roomDeltaT,"graden.")
 print("Het temperatuurverschil in de vloer is",floorDeltaT,"graden.")
+
+print("Berekenen van de hoeveelheid energie benodigd om de vloer en kamer te verwarmen.")
+floorRequirement = f.PowerRequiredToHeatSubstance(
+    f.TrueSubstanceMass(floorCapacity,SpecificMass.get("Gewapend Beton")),
+    SpecificHeat.get("Beton"), floorDeltaT
+)
+print("De energie benodigd om de vloer te verwarmen is",floorRequirement)
+roomRequirement = f.PowerRequiredToHeatSubstance(
+    f.TrueSubstanceMass(roomCapacity,SpecificMass.get("Lucht")),
+    SpecificHeat.get("Lucht"), roomDeltaT
+)
+print("De energie benodigd om de kamer te verwarmen is",roomRequirement)
 
 ##tijdsfunctie zodat het lijkt alsof de kamer echt warm wordt > simulatie
 ##van deltaT delen door benodigde tijd = temperatuur increment
