@@ -1,4 +1,8 @@
-import math as m
+"""This Module contains the formulas used to calculate certain
+values used in the simulation heatpumpSim in the process
+of the program"""
+
+###FUNCTION SECTION###
 
 ##misschien overbodig
 def WattToJoules(watt):

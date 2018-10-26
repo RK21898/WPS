@@ -1,3 +1,5 @@
+
+
 ###IMPORT SECTION###
 import simFormulas as f
 from datadump import SpecificHeat, SpecificMass, StartingTemps, DesiredTemps
@@ -30,6 +32,10 @@ floorStartTemp = float(input("Voer een begintemperatuur voor de vloer in: "))
 floorDesiredTemp = float(input("Voer een eindtemperatuur voor de vloer in: "))
 roomDeltaT = roomDesiredTemp - roomStartTemp
 floorDeltaT = floorDesiredTemp - floorStartTemp
+StartingTemps["Starting Temp Floor"] = floorStartTemp
+StartingTemps["Starting Temp Room"] = roomStartTemp
+DesiredTemps["Desired Temp Floor"] = floorDesiredTemp
+DesiredTemps["Desired Temp Room"] = roomDesiredTemp
 print("Het temperatuurverschil in de kamer is",roomDeltaT,"graden.",
       "\nHet temperatuurverschil in de vloer is",floorDeltaT,"graden.")
 
@@ -51,6 +57,4 @@ print("Benodigde tijd om de kamer op te warmen:",roomTransition,"uur",
       "Benodigde tijd om de vloer op te warmen:",floorTransition,"uur")
 
 
-##tijdsfunctie zodat het lijkt alsof de kamer echt warm wordt > simulatie
-##van deltaT delen door benodigde tijd = temperatuur increment
-##startTemp + increment totdat desiredTemp is bereikt
+
