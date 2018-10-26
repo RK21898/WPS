@@ -10,7 +10,7 @@ import time as t
 ###VARIABLE SECTION###
 
 ###FUNCTION SECTION###
-def realism_transitioning(deltaT, time, startingTemps, desiredTempts, speedup):
+def realism_transitioning(deltaT, time, speedup):
     return None
 
 ###basic bitch oplossing
