@@ -1,3 +1,10 @@
+"""This Module contains the tables used for simulating room heating
+by using a heat pump, to use in calculating the values used in the
+process of the program heatpumpSim"""
+
+
+###VARIABLE SECTION###
+
 #Insulation Type Information
 #Watts per square meter used to warm a room of x m^3 at
 #a standard of 22 degrees prior to corrections
@@ -32,7 +39,8 @@ VerticalSoilTypeInformation = {
 #specific heat of substance in joules per kilo per kelvin
 SpecificHeat = {
     "Lucht":1005,
-    "Water":2060
+    "Water":2060,
+    "Beton":920
 }
 
 #specific mass of substance in kg per cubic meter
@@ -43,12 +51,12 @@ SpecificMass = {
 
 #starting temperatures
 StartingTemps = {
-    "Starting Temp Floor":0,
-    "Starting Temp Room":0
+    "Starting Temp Floor":None,
+    "Starting Temp Room":None
 }
 
 #desired temperatures
 DesiredTemps = {
-    "Desired Temp Floor":35,
-    "Desired Temp Room":0
+    "Desired Temp Floor":None,
+    "Desired Temp Room":None
 }
