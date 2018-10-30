@@ -1,5 +1,6 @@
 ###IMPORT SECTION###
 import simFormulas as f
+import heatpumpFunc as func
 from datadump import SpecificHeat, SpecificMass, StartingTemps, DesiredTemps
 
 ###VARIABLES SECTION###
@@ -52,7 +53,8 @@ roomTransition = f.TransititionTime(roomRequirement, (f.HeatTransfer(6,roomCapac
 floorTransition = f.TransititionTime(floorRequirement, 3.88)
 print(roomTransition, floorTransition)
 print("Benodigde tijd om de kamer op te warmen:",roomTransition,"uur",
-      "Benodigde tijd om de vloer op te warmen:",floorTransition,"uur")
+      "\nBenodigde tijd om de vloer op te warmen:",floorTransition,"uur")
+func.realism_transitioning(StartingTemps["Starting Temp Floor"],(floorWidth*floorLength),roomCapacity,floorCapacity,256)
 
 
 

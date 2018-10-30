@@ -19,6 +19,13 @@ def PowerRequirementForRoom(length, width, height, InsulationTypeInformation):
     Returns the PowerRequirementForRoom"""
     return length * width * height * InsulationTypeInformation
 
+def FloorWarmingPower(surface):
+    """Calculate the power the floor warming can deliver
+    @param surface: the surface of the floor the warming is placed in
+    @return: the power in increments of 970 watts per 10 square meters"""
+    return (surface / 10) * 970 #in watts
+
+
 def COP(powerOutput, addedPower):
     """Calculate the COP coefficient of the heat pump
     powerOutput / addedPower
@@ -38,26 +45,44 @@ def WaterFlow(power, density, specific_heat, deltaT):
 
 def SPF(Qw, Qk, E, G):
     """Seasonal Performance Factor
-    Qw = warmth delivered to building by heat pump in MWh
-    Qk = cold delivered to building by heat pump in MWh
-    E = electricity used by the pump system in MWh
-    G = electric equivalent of natural gas used by the pump system
+    @param Qw: warmth delivered to building by heat pump in MWh
+    @param Qk: cold delivered to building by heat pump in MWh
+    @param E: electricity used by the pump system in MWh
+    @param G: electric equivalent of natural gas used by the pump system
     #Returns Seasonal Performance Factor"""
     return (Qw + Qk) / (E + G)
 
 def SubstanceMass(m, rho):
-    """True mass in kg of the substance calculated using the 
-    capacity in cubic meters and specific mass of a substance"""
+    """True mass in kg of the substance calculated 
+    @param m: capacity in cubic meters
+    @param rho: specific mass of a substance
+    @return: true mass"""
     return m * rho
 
 ##misschien betere naam voor functie
 def PowerRequiredToHeatSubstance(m, c, DeltaT):
     """Calculate the power needed to heat up a substance, like air
-    M = mass of substance
-    C = specific heat
-    DeltaT = Desired temp - started temp in K
-    Returns the amount of power required to heat up substance"""
+    @param m: mass of substance
+    @param c: specific heat
+    @param DeltaT: Desired temp - start temp in K
+    @return: the amount of power required to heat up substance"""
     return (m * c * DeltaT) / 3600000
+
+def CurrentDeltaT(Q,m,c):
+    """Calculate the current temperature difference using the warmth formula
+    @param Q: heat in joules
+    @param m: mass of substance
+    @param c: specific heat
+    @return: current temp difference"""
+    return Q / (m * c)
+
+def WarmthRequired(m,c,DeltaT):
+    """Calculate the warmth needed to heat up a substance, like air
+    @param m: mass of substance
+    @param c: specific heat
+    @param DeltaT: Desired temp - start temp in K
+    @return: the amount of warmth required to heat up substance"""
+    return (m * c * DeltaT)
 
 def TrueSubstanceMass(m, rho):
     """Calculate the true mass of a substance using the capacity in 
