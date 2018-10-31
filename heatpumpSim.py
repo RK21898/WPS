@@ -49,12 +49,13 @@ roomRequirement = f.PowerRequiredToHeatSubstance(
 print("De energie benodigd om de kamer te verwarmen is",roomRequirement,"kWh")
 
 print("Individuele tijd berekenen voor de verwarming van vloer en kamer.")
+print(roomRequirement, (f.HeatTransfer(6,roomCapacity/roomHeight,floorDeltaT)/1000),roomCapacity,roomHeight,floorDeltaT)
+print(floorRequirement, f.FloorWarmingPower(floorLength*floorWidth))
 roomTransition = f.TransititionTime(roomRequirement, (f.HeatTransfer(6,roomCapacity/roomHeight,floorDeltaT)/1000))
-floorTransition = f.TransititionTime(floorRequirement, 3.88)
-print(roomTransition, floorTransition)
+floorTransition = f.TransititionTime(floorRequirement, (f.FloorWarmingPower(floorLength*floorWidth)/1000))
 print("Benodigde tijd om de kamer op te warmen:",roomTransition,"uur",
       "\nBenodigde tijd om de vloer op te warmen:",floorTransition,"uur")
-func.realism_transitioning(StartingTemps["Starting Temp Floor"],(floorWidth*floorLength),roomCapacity,floorCapacity,256)
+func.realism_transitioning(StartingTemps["Starting Temp Floor"],(floorWidth*floorLength),roomCapacity,floorCapacity,1024)
 
 
 

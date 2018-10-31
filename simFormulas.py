@@ -1,6 +1,8 @@
 """This Module contains the formulas used to calculate certain
 values used in the simulation heatpumpSim in the process
 of the program"""
+###IMPORT SECTION###
+import math as m
 
 ###FUNCTION SECTION###
 
@@ -23,7 +25,7 @@ def FloorWarmingPower(surface):
     """Calculate the power the floor warming can deliver
     @param surface: the surface of the floor the warming is placed in
     @return: the power in increments of 970 watts per 10 square meters"""
-    return (surface / 10) * 970 #in watts
+    return m.ceil((surface / 10)) * 970 #in watts
 
 
 def COP(powerOutput, addedPower):
