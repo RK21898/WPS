@@ -1,4 +1,4 @@
-#Imports
+###IMPORT SECTION###
 import csv
 
 def importCSV(path):

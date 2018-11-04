@@ -1,6 +1,8 @@
 import numpy as np
 import gym
 
+###THIS IS JUST A TEST!!!!!!!!!!!!
+
 env = gym.make("CartPole-v0")
 
 done = False
