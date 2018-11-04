@@ -108,6 +108,14 @@ def TransferCoefficient(velocity):
     per kelvin using the airflow in meters per second => 12*sqrt(v)"""
     return 12 * velocity
 
+def TemperatureModel(time):
+    """ For the temperature at any given time using a cosine formula
+        @param time = time of day as an integer
+        @ptype: float
+        @return: an outside temperature that can be substracted from the inside temperature
+        @rtype: float"""
+    return ((m.cos(time*.262)*3)-1.6)/-.875 
+
 
 
 
