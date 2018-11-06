@@ -17,7 +17,7 @@ from datadump import DesiredTemps, SpecificHeat, SpecificMass
 
 ###FUNCTION SECTION###
 def realism_transitioning(currTemp, surface, roomCapacity, floorCapacity, speedup):
-    with open("..\\WPS\\simData",t.now(),".csv", "w") as file:
+    with open("..\\WPS\\simData.csv", "w") as file:
         wrt = c.writer(file, dialect="excel", delimiter=";")
         
         ticker = 0
@@ -25,6 +25,8 @@ def realism_transitioning(currTemp, surface, roomCapacity, floorCapacity, speedu
 
         currRoomTemp = currTemp
         currFloorTemp = currTemp
+        
+        start = t.now()
         
         while currRoomTemp <= DesiredTemps["Desired Temp Room"]:
             
@@ -34,7 +36,14 @@ def realism_transitioning(currTemp, surface, roomCapacity, floorCapacity, speedu
             currRoomDeltaT = f.CurrentDeltaT(f.HeatTransfer(f.TransferCoefficient(0.25),surface,f.CurrentDeltaT(f.WarmthRequired(f.TrueSubstanceMass(floorCapacity, SpecificMass["Gewapend Beton"]),SpecificHeat["Beton"],currFloorDeltaT),SpecificMass["Lucht"],SpecificHeat["Lucht"])),f.TrueSubstanceMass(roomCapacity,SpecificMass["Lucht"]),SpecificHeat["Lucht"])
             if currFloorTemp > currRoomTemp:
                 currRoomTemp += currRoomDeltaT
-            
+                currtime = (t.now() - start)
+                currtime = currtime.total_seconds() / 3600
+                outsideTemp = f.TemperatureModel(currtime) * 0.0005
+                if outsideTemp < 0:
+                    currRoomTemp -= -outsideTemp
+                else:  
+                    currRoomTemp -= outsideTemp
+                
             time.sleep(1 / speedup)
 
             if(ticker % 60 == 0):
@@ -43,7 +52,18 @@ def realism_transitioning(currTemp, surface, roomCapacity, floorCapacity, speedu
                 wrt.writerow(row)
 
             ticker+=1
-            
+
+        print("done")
+
+        file.close()
+    
+def datetime_to_float(d):
+    """convert datetime to time in hours"""
+    epoch = t.utcfromtimestamp(0)
+    total_seconds =  (d - epoch).total_seconds()
+    # total_seconds will be in decimals (millisecond precision)
+    return total_seconds / 3600
+
 
 ###basic bitch oplossing
 ##tijdsfunctie zodat het lijkt alsof de kamer echt warm wordt > simulatie

@@ -27,7 +27,6 @@ def FloorWarmingPower(surface):
     @return: the power in increments of 970 watts per 10 square meters"""
     return m.ceil((surface / 10)) * 970 #in watts
 
-
 def COP(powerOutput, addedPower):
     """Calculate the COP coefficient of the heat pump
     powerOutput / addedPower
@@ -107,6 +106,14 @@ def TransferCoefficient(velocity):
     """Calculate the transfer coefficient in watts per square meter
     per kelvin using the airflow in meters per second => 12*sqrt(v)"""
     return 12 * velocity
+
+def TemperatureModel(time):
+    """ For the temperature at any given time using a cosine formula
+        @param time = time of day as an integer
+        @ptype: float
+        @return: an outside temperature that can be substracted from the inside temperature
+        @rtype: float"""
+    return ((m.cos(time*.262)*3)-1.6)/-.875 
 
 
 
