@@ -27,7 +27,6 @@ def FloorWarmingPower(surface):
     @return: the power in increments of 970 watts per 10 square meters"""
     return m.ceil((surface / 10)) * 970 #in watts
 
-
 def COP(powerOutput, addedPower):
     """Calculate the COP coefficient of the heat pump
     powerOutput / addedPower
