@@ -1,4 +1,5 @@
 ###IMPORT SECTION###
+import VariableTempRequestModule as v
 import readerModule as rm
 import bufferModule as bm
 import Formulas as f
@@ -48,10 +49,10 @@ class Sim(): #receives an action in the form of action = {'start temp' : x, 'des
 
     def _step(self, action, stepNum):
         #figure out the energy we can use in joule/sec
-        if bm.Buffer.isEmpty:
-            self.energyInput = 10000 #joule/sec
-        elif not bm.Buffer.isEmpty:
-            self.energyInput = f.EnergyInside(bm.Buffer.currContent, 4187, action['DesiredTemp'] - bm.Buffer.currTemp)
+        #if bm.Buffer.isEmpty:
+        #    self.energyInput = 10000 #joule/sec
+        #elif not bm.Buffer.isEmpty:
+        #    self.energyInput = f.EnergyInside(bm.Buffer.currContent, 4187, action['DesiredTemp'] - bm.Buffer.currTemp)
         
         stepTime = (self.energyNeed[stepNum] / self.space_output) #outcome in seconds
 
@@ -76,15 +77,25 @@ class Sim(): #receives an action in the form of action = {'start temp' : x, 'des
 
 action = {}
 
-startingTemp = float(input("Starting Temperature of room: "))
-desiredTemp = float(input("Desired Temperature of room: "))
+#startingTemp = float(input("Starting Temperature of room: "))
+#desiredTemp = float(input("Desired Temperature of room: "))
+startHours = [0, 6, 9, 12, 15, 18, 21]
+endHours = [6, 9, 12, 15, 18, 21, 23]
+wantedTemps = [-3, -2, 0, 1, -1, -2, -3]
+v.createCSV(startHours,endHours,wantedTemps,'OutsideTemp')
+
+startHours = [0, 6, 8, 16, 18, 22]
+endHours = [6, 8, 16, 18, 22, 23]
+wantedTemps = [18, 20, 18, 20, 21, 18]
+v.createCSV(startHours,endHours,wantedTemps,'InsideRequestTemp')
+
 l = float(input("Length of room (in meters): "))
 b = float(input("Width of room (in meters): "))
 h = float(input("Height of room (in meters): "))
 d = float(input("Depth of floor (in centimeters): ")) / 100
 
-action['StartingTemp'] = startingTemp
-action['DesiredTemp'] = desiredTemp
+#action['StartingTemp'] = startingTemp
+#action['DesiredTemp'] = desiredTemp
 action['Space'] = [l,b,h,d] 
 
 p.DeltaTemperatureGraph("OutsideTemp","InsideRequestTemp")
