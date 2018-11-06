@@ -8,7 +8,7 @@ rewardMultiplierTemperatureHot = 1.2
 rewardMultiplierTemperatureCold = 1.2
 
 #Debug values
-energyUndershoot = 50 #in KWh
+energyUndershoot = 1 #in KWh
 energyOvershoot = 0 #in KWh
 userSatisfaction = 100
 deltaTHot = 2
@@ -19,33 +19,35 @@ def GetRewards():
 
 def CalculateRewardTotal():
     #Get the individual rewards from their respective reward calculations
-    energy = CalculateRewardEnergy(energyOvershoot, energyUndershoot)
-    user = CalculateRewardUser(userSatisfaction)
-    temperature = CalculateRewardTemperature(deltaTHot, deltaTCold)
+    userReward = CalculateRewardUser(userSatisfaction)
+    temperatureReward = CalculateRewardTemperature(deltaTHot, deltaTCold)
+    energyReward = CalculateRewardEnergy(energyOvershoot, energyUndershoot, temperatureReward)
 
     #Total all the reward values and return this to the AI
-    return (energy + user + temperature)
+    return (energyReward + userReward + temperatureReward)
 
 
 #Calculate the Reward that the AI should get for the values of the undershoot and overshoot.
 #The under- and overshoot values are given based on KWh.
 #To normalize the rewards these values are divided by 100 before any calculations are made.
 #The vaue of 100 is a wet finger value. If you read this, please contact Bram and tell him to change it. Seriously.
-def CalculateRewardEnergy(energyOvershoot, energyUndershoot):
+def CalculateRewardEnergy(energyOvershoot, energyUndershoot, temperatureReward):
     #Default energyReward
-    energyReward = 1
+    energyReward = 0
 
     #Overshoot calculations
     if (energyOvershoot == 0):
         energyReward += (1 * rewardMultiplierEnergyOver)
-    if (energyOvershoot > 0):
-        energyReward -= ((energyOvershoot / 100) * rewardMultiplierEnergyOver)
+    elif (energyOvershoot > 0):
+        energyReward -= (energyOvershoot * rewardMultiplierEnergyOver)
 
     #Undershoot calculations
     if (energyUndershoot == 0):
         energyReward += (1 * rewardMultiplierEnergyUnder)
-    if (energyUndershoot > 0):
-        energyReward -= ((energyUndershoot / 100) * rewardMultiplierEnergyUnder)
+    elif (energyUndershoot > 0 and temperatureReward < 0):
+        energyReward -= (energyUndershoot * rewardMultiplierEnergyUnder)
+    elif (energyUndershoot > 0 and temperatureReward > 0):
+        energyReward += (energyUndershoot * rewardMultiplierEnergyUnder)
 
     #Return the end result
     return energyReward
@@ -95,3 +97,7 @@ def CalculateRewardTemperature(hotDiff, coldDiff):
 
     #Finally return the vaue for the temperature reward
     return temperatureReward
+
+
+print(GetRewards())
+text = input('HALLO')
