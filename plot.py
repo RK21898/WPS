@@ -1,3 +1,5 @@
+"""Create the graphs with the usage patterns and outside temperatures and inside requested temperatures."""
+
 import matplotlib.pyplot as plt
 import readerModule as rm
 import numpy as np
@@ -35,27 +37,30 @@ def DeltaTemperatureGraph(f1, f2):
     #OUTSIDE TEMPERATURE CODE EXISTS NOW, ADD INSIDE REQUESTED TEMPERATURES AND MAKE A DELTA GRAPH
     #OPTIONALLY ADD SMOOTHING CODE
 
-def EnergyNeedGraph(f1, f2):
+def EnergyNeedGraph(f1, f2, action):
     outerdata = rm.OpenTemperatureModel(f1)
     innerdata = rm.OpenTemperatureModel(f2)
 
-    innerTemps, outerTemps, energyNeeds, x_axis = [], [], [], []
+    innerTemp, outerTemp, energyNeed, x_axis = [], [], [], []
 
     for array in innerdata:
-        innerTemps.append(array[1])
+        innerTemp.append(array[1])
         x_axis.append(array[0])
 
     for array in outerdata:
-        outerTemps.append(array[1])
+        outerTemp.append(array[1])
 
-    for i in range(0,len(innerTemps)):
-        energyNeeds.append(f.EnergyRequired(f.SubstanceMass(6*6*2.5, 1.29), 1005, (innerTemps[i] - outerTemps[i])))
+    for i in range(0,len(innerTemp)):
+        space = action['Space'][0] * action['Space'][1] * action['Space'][2]
+        #space2 = action['Space'][0] * action['Space'][1] * action['Space'][3]
+        energyNeed.append(f.EnergyRequired(f.SubstanceMass(space, 1.29), 1005, (innerTemp[i] - outerTemp[i])))
+                          #+f.EnergyRequired(f.SubstanceMass(space2, 2500), 920, (innerTemp[i] - innerTemp[i-1])))
 
     fig = plt.figure()
     fig.show()  
     ax = fig.add_subplot(111)
 
-    ax.plot(x_axis, energyNeeds, label="OutsideTemp", fillstyle="none")
+    ax.plot(x_axis, energyNeed, label="OutsideTemp", fillstyle="none")
 
     plt.xlabel("Time (hours)")
     plt.gcf().autofmt_xdate()
@@ -63,6 +68,7 @@ def EnergyNeedGraph(f1, f2):
     plt.legend(loc=0)
     plt.draw()
     plt.show()
-    
-DeltaTemperatureGraph("OutsideTemp","InsideRequestTemp")
-EnergyNeedGraph("OutsideTemp","InsideRequestTemp")
+
+#USAGE   
+#DeltaTemperatureGraph("OutsideTemp","InsideRequestTemp")
+#EnergyNeedGraph("OutsideTemp","InsideRequestTemp")
