@@ -60,7 +60,7 @@ def EnergyNeedGraph(f1, f2, action):
     fig.show()  
     ax = fig.add_subplot(111)
 
-    ax.plot(x_axis, energyNeed, label="OutsideTemp", fillstyle="none")
+    ax.plot(x_axis, energyNeed, label="EnergyNeed", fillstyle="none")
 
     plt.xlabel("Time (hours)")
     plt.gcf().autofmt_xdate()
