@@ -2,33 +2,35 @@
 import VariableTempRequestModule as v
 import readerModule as rm
 import bufferModule as bm
+import rewardModule as rewardM
 import Formulas as f
 import numpy as np
 import plot as p
 
 def _CalculateNeeds(action):
-        innerData = rm.OpenTemperatureModel("InsideRequestTemp")
-        outerData = rm.OpenTemperatureModel("OutsideTemp")
+    """"CalculateNeeds calculates the needs"""
+    innerData = rm.OpenTemperatureModel("InsideRequestTemp")
+    outerData = rm.OpenTemperatureModel("OutsideTemp")
 
-        innerTemp, outerTemp, energyNeed = [], [], []
+    innerTemp, outerTemp, energyNeed = [], [], []
 
-        for array in innerData:
-            innerTemp.append(array[1])
+    for array in innerData:
+        innerTemp.append(array[1])
 
-        for array in outerData:
-            outerTemp.append(array[1])
+    for array in outerData:
+        outerTemp.append(array[1])
 
-        for i in range(0, len(innerTemp)):
-            space = action['Space'][0] * action['Space'][1] * action['Space'][2]
-            #space2 = action['Space'][0] * action['Space'][1] * action['Space'][3]
-            #print((innerTemp[i] - innerTemp[i-1]))
-            energyNeed.append(f.EnergyRequired(f.SubstanceMass(space, 1.29), 1005, (innerTemp[i] - outerTemp[i])))
-                              #+f.EnergyRequired(f.SubstanceMass(space2, 2500), 920, (innerTemp[i] - innerTemp[i-1])))
-        
-        return energyNeed
+    for i in range(0, len(innerTemp)):
+        space = action['Space'][0] * action['Space'][1] * action['Space'][2]
+        #space2 = action['Space'][0] * action['Space'][1] * action['Space'][3]
+        #print((innerTemp[i] - innerTemp[i-1]))
+        energyNeed.append(f.EnergyRequired(f.SubstanceMass(space, 1.29), 1005, (innerTemp[i] - outerTemp[i])))
+                            #+f.EnergyRequired(f.SubstanceMass(space2, 2500), 920, (innerTemp[i] - innerTemp[i-1])))
+    
+    return energyNeed
 
 def _CalculateSpace(action):
-    
+    """CalculateSpace calculates space"""
     action_space = {}
     
     action_space['surface'] = action['Space'][0] * action['Space'][1]
@@ -45,9 +47,27 @@ class Sim(): #receives an action in the form of action = {'start temp' : x, 'des
         self.energyNeed = _CalculateNeeds(self.action)
         self.action_space = _CalculateSpace(self.action)
         self.space_output = f.FloorWarmingPower(self.action_space['surface'])
+        self.powerlevel = 0
         self.fulfilledNeedsData = {}
 
+
     def _step(self, action, stepNum):
+        """The _step does a _step"""
+        #Check if the action is heat water.
+        if (action == 1):            
+            #Get the current values of the Buffer
+            bufferValues = bm.Buffer.GetValues(self)
+            #If the buffer IS EMPTY
+            if (bufferValues[3]):
+                #Make the AI choose a valid power level for the heatpump
+                self.powerlevel = self.ai(self, bufferValues)
+            #If the buffer IS NOT EMPTY
+            elif (not bufferValues[3]):
+                #Make the AI choose a valid power level for the heatpump
+                self.powerlevel = self.ai(self, bufferValues)
+            #Check if the goal has been reached            
+
+
         #figure out the energy we can use in joule/sec
         #if bm.Buffer.isEmpty:
         #    self.energyInput = 10000 #joule/sec
@@ -55,22 +75,24 @@ class Sim(): #receives an action in the form of action = {'start temp' : x, 'des
         #    self.energyInput = f.EnergyInside(bm.Buffer.currContent, 4187, action['DesiredTemp'] - bm.Buffer.currTemp)
         
         stepTime = (self.energyNeed[stepNum] / self.space_output) #outcome in seconds
-
+        self._reward()
         self.fulfilledNeedsData["Iteration {0}".format(stepNum)] = [stepTime] #
 
     def _reward(self):
-       # if "Good":
-       #     return 10
-       # elif "Mediocre":
-       #     return 0
-       # elif "Bad":
-       #     return -5
-       # elif "Very Bad":
-       #     return -10 
-        pass
+        rewardValue = rewardM.GetRewards()
+                
 
     def policyExport(self):
         ...
+
+
+    def ai(self, bufferValues):
+        """"The ai function does ai functions"""
+        #If the step does not pass any extra values onto the AI it has 
+        if (bufferValues[0] and bufferValues[1] and bufferValues[2] == NULL):
+            if (bufferValues[3]):
+                return 100
+            return 50
 
 
 ###MAIN SECTION###
