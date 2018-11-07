@@ -112,7 +112,7 @@ endHours = [6, 8, 16, 18, 22, 23]
 wantedTemps = [18, 20, 18, 20, 21, 18]
 v.createCSV(startHours,endHours,wantedTemps,'InsideRequestTemp')
 
-action["Action"] = input("Type the number for the option you choose, 1: Heat water, 2: Heat room: ")
+action["Action"] = int(input("Type the number for the option you choose, 1: Heat water, 2: Heat room: "))
 
 if action["Action"] == 1:
     action["Desired Temp"] = float(input("Desired temperature inside buffer: "))
@@ -132,7 +132,7 @@ elif action["Action"] == 2:
     #action['DesiredTemp'] = desiredTemp
     action['Space'] = [l,b,h,d] 
 
-    p.DeltaTemperatureGraph("OutsideTemp","InsideRequestTemp")
+    p.DeltaTemperatureGraph("OutsideTemp","InsideRequestTemp","CurrentInsideTemp")
     p.EnergyNeedGraph("OutsideTemp","InsideRequestTemp",action)
 
     sim = Sim(action)

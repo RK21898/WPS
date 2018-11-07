@@ -5,12 +5,14 @@ import readerModule as rm
 import numpy as np
 import Formulas as f
 
-def DeltaTemperatureGraph(f1, f2):
+def DeltaTemperatureGraph(f1, f2, f3):
     outerdata = rm.OpenTemperatureModel(f1)
     innerdata = rm.OpenTemperatureModel(f2)
+    currdata = rm.OpenTemperatureModel(f3)
 
-    x_1_axis, x_2_axis = [], []
-    y_1_axis, y_2_axis = [], []
+    x_1_axis, x_2_axis, x_3_axis = [], [], []
+    y_1_axis, y_2_axis, y_3_axis = [], [], []
+
 
     for array in outerdata:
         x_1_axis.append(array[0])
@@ -20,12 +22,17 @@ def DeltaTemperatureGraph(f1, f2):
         x_2_axis.append(array[0])
         y_2_axis.append(array[1])
 
+    for array in currdata:
+        x_3_axis.append(array[0])
+        y_3_axis.append(array[1])
+
     fig = plt.figure()
     fig.show()  
     ax = fig.add_subplot(111)
 
     ax.plot(x_1_axis, y_1_axis, label="OutsideTemp", fillstyle="none")
     ax.plot(x_2_axis, y_2_axis, label="InsideTemp", fillstyle="none")
+    ax.plot(x_3_axis, y_3_axis, label="CurrInsideTemp", fillstyle="none", linestyle="dashed")
 
     plt.xlabel("Time (hours)")
     plt.gcf().autofmt_xdate()
@@ -70,5 +77,5 @@ def EnergyNeedGraph(f1, f2, action):
     plt.show()
 
 #USAGE   
-#DeltaTemperatureGraph("OutsideTemp","InsideRequestTemp")
+#DeltaTemperatureGraph("OutsideTemp","InsideRequestTemp","CurrInsideTemp")
 #EnergyNeedGraph("OutsideTemp","InsideRequestTemp")
