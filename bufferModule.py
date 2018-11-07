@@ -20,4 +20,5 @@ class Buffer():
             return True
 
     def GetValues(self):
+        """"Gets the current values of the buffer and passes them on"""
         return ([self.maxContent, self.currContent, self.currTemp, self.isEmpty])
