@@ -5,11 +5,14 @@ import math as m
 
 ###FUNCTION SECTION###
 def EnergyRequired(m, c, dT):
-    """Calculate the power needed to heat up a substance, like air
+    """Calculate the Energy needed to heat up a substance, like air
     @param m: mass of substance
     @param c: specific heat
     @param dT: Desired temp - start temp in K
-    @return: the amount of power required to heat up substance"""
+    @return: the amount of Energy required to heat up substance"""
+    return (m*c*dT)
+
+def EnergyInside(m, c, dT):
     return (m*c*dT)
 
 def CurrentDeltaT(Q,m,c):
@@ -32,3 +35,9 @@ def COP(powerOutput, addedPower):
     powerOutput / addedPower
     Returns the COP coefficient"""
     return powerOutput / addedPower
+
+def FloorWarmingPower(surface):
+    """Calculate the power the floor warming can deliver
+    @param surface: the surface of the floor the warming is placed in
+    @return: the power in increments of 970 watts per 10 square meters"""
+    return m.ceil((surface / 10)) * 970 #in watts
