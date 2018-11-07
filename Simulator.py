@@ -50,23 +50,26 @@ class Sim(): #receives an action in the form of action = {'start temp' : x, 'des
         self.powerlevel = 0
         self.fulfilledNeedsData = {}
 
-
-    def _step(self, action, stepNum):
+    def _step(self, action, stepNum=0):
         """The _step does a _step"""
         #Check if the action is heat water.
-        if (action == 1):            
+        if (action["Action"] == 1):            
             #Get the current values of the Buffer
             bufferValues = bm.Buffer.GetValues(self)
             #If the buffer IS EMPTY
             if (bufferValues[3]):
                 #Make the AI choose a valid power level for the heatpump
-                self.powerlevel = self.ai(self, bufferValues)
+                self.powerlevel = self.ai(bufferValues)
             #If the buffer IS NOT EMPTY
             elif (not bufferValues[3]):
                 #Make the AI choose a valid power level for the heatpump
-                self.powerlevel = self.ai(self, bufferValues)
-            #Check if the goal has been reached            
+                self.powerlevel = self.ai(bufferValues)
+            #Check if the goal has been reached
+            elif (bufferValues[1] == bufferValues[0] and bufferValues[2] == action["Desired Temp"]):
+                ...
 
+        elif (action["Action"] == 2):
+            ...             
 
         #figure out the energy we can use in joule/sec
         #if bm.Buffer.isEmpty:
@@ -79,17 +82,15 @@ class Sim(): #receives an action in the form of action = {'start temp' : x, 'des
         self.fulfilledNeedsData["Iteration {0}".format(stepNum)] = [stepTime] #
 
     def _reward(self):
-        rewardValue = rewardM.GetRewards()
-                
+        return rewardM.GetRewards()
 
     def policyExport(self):
         ...
 
-
     def ai(self, bufferValues):
         """"The ai function does ai functions"""
         #If the step does not pass any extra values onto the AI it has 
-        if (bufferValues[0] and bufferValues[1] and bufferValues[2] == NULL):
+        if (bufferValues[0] and bufferValues[1] and bufferValues[2] == None):
             if (bufferValues[3]):
                 return 100
             return 50
@@ -111,23 +112,33 @@ endHours = [6, 8, 16, 18, 22, 23]
 wantedTemps = [18, 20, 18, 20, 21, 18]
 v.createCSV(startHours,endHours,wantedTemps,'InsideRequestTemp')
 
-l = float(input("Length of room (in meters): "))
-b = float(input("Width of room (in meters): "))
-h = float(input("Height of room (in meters): "))
-d = float(input("Depth of floor (in centimeters): ")) / 100
+action["Action"] = input("Type the number for the option you choose, 1: Heat water, 2: Heat room: ")
 
-#action['StartingTemp'] = startingTemp
-#action['DesiredTemp'] = desiredTemp
-action['Space'] = [l,b,h,d] 
+if action["Action"] == 1:
+    action["Desired Temp"] = float(input("Desired temperature inside buffer: "))
+    
+    sim = Sim(action)
 
-p.DeltaTemperatureGraph("OutsideTemp","InsideRequestTemp")
-p.EnergyNeedGraph("OutsideTemp","InsideRequestTemp",action)
+    #make loop so it keeps doing step until complete
+    sim._step(action)
 
-sim = Sim(action)
+elif action["Action"] == 2:
+    l = float(input("Length of room (in meters): "))
+    b = float(input("Width of room (in meters): "))
+    h = float(input("Height of room (in meters): "))
+    d = float(input("Depth of floor (in centimeters): ")) / 100
 
-for i in range(0, len(sim.energyNeed)):
-    sim._step(action, i)
+    #action['StartingTemp'] = startingTemp
+    #action['DesiredTemp'] = desiredTemp
+    action['Space'] = [l,b,h,d] 
 
-print(sim.fulfilledNeedsData)
-print(sim.energyNeed)
+    p.DeltaTemperatureGraph("OutsideTemp","InsideRequestTemp")
+    p.EnergyNeedGraph("OutsideTemp","InsideRequestTemp",action)
 
+    sim = Sim(action)
+
+    for i in range(0, len(sim.energyNeed)):
+        sim._step(action, i)
+
+    print(sim.fulfilledNeedsData)
+    print(sim.energyNeed)

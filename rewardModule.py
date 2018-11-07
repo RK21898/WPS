@@ -97,7 +97,3 @@ def CalculateRewardTemperature(hotDiff, coldDiff):
 
     #Finally return the vaue for the temperature reward
     return temperatureReward
-
-
-print(GetRewards())
-text = input('HALLO')
