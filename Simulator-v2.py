@@ -112,18 +112,21 @@ class Sim(): #receives an action in the form of action = {'start temp' : x, 'des
     #    self.fulfilledNeedsData = {}
 
     def _step(self, tick):
-        self.currTemp += d(self.change)
-        if not np.isnan(self.desiredTemp[tick]):
+        if not (np.isnan(self.desiredTemp[tick]) or self.state == "Terminated"):
+            self.currTemp += d(self.change)
+
             #awards 0 points for heating up towards the goal
-            if self.currTemp < self.desiredTemp[tick] and self.change > 0 and self.heatingState == "UpTowardsGoal":
+            if self.currTemp < self.desiredTemp[tick] - 0.025 and self.change > 0 and self.heatingState == "UpTowardsGoal":
                 reward = 0
+                self.change += d(self.change * d(1.05))
 
             #awards 0 points for cooling down towards the goal
-            elif self.currTemp > self.desiredTemp[tick] and self.change < 0 and self.heatingState == "DownTowardsGoal":
+            elif self.currTemp > self.desiredTemp[tick] + 0.025 and self.change < 0 and self.heatingState == "DownTowardsGoal":
                 reward = 0
+                self.change += d(self.change * d(1.05))
             
-            #awards 0 points for transitioning into the TowardsGoal state
-            elif (self.currTemp < self.desiredTemp[tick]) or (self.currTemp > self.desiredTemp[tick]) and self.change == 0:
+            #awards 0 points for transitioning into the TowardsGoal states
+            elif (self.currTemp < self.desiredTemp[tick] - 0.025) or (self.currTemp > self.desiredTemp[tick] + 0.025) and (self.change > -0.001 or self.change < 0.001):
                 if  (self.currTemp < self.desiredTemp[tick]):
                     self.heatingState = "UpTowardsGoal"
                 elif (self.currTemp > self.desiredTemp[tick]):
@@ -131,7 +134,7 @@ class Sim(): #receives an action in the form of action = {'start temp' : x, 'des
                 reward = 0
             
             #is no longer heating up towards the goal, has however reached the OnGoal critera,
-            #but the temperature change is still higher than expected, therefore entering the NotTowardsGoal state
+            #but the temperature change is still higher than expected, therefore entering the NotTowardsGoal state and starting penalization
             elif (self.currTemp > self.desiredTemp[tick] - 0.025 or self.currTemp < self.desiredTemp[tick] + 0.025 ) and (self.change > 0 or self.change < 0):
                 self.heatingState = "NotTowardsGoal"
                 if self.change < 0:
@@ -141,7 +144,7 @@ class Sim(): #receives an action in the form of action = {'start temp' : x, 'des
                 self.change -= d(self.change * d(0.05))
 
             #is no longer cooling down towards the goal, and penalizes for the negative effect
-            elif self.currTemp < self.desiredTemp[tick] and (self.change > 0 or self.change < 0) and self.heatingState == "NotTowardsGoal":
+            elif self.currTemp < self.desiredTemp[tick] - 0.025 and (self.change > 0 or self.change < 0) and self.heatingState == "NotTowardsGoal":
                 if self.change < 0:
                     reward = -d(-self.change)
                 else:
@@ -149,7 +152,7 @@ class Sim(): #receives an action in the form of action = {'start temp' : x, 'des
                 self.change -= d(self.change * d(0.05))
 
             #is no longer heating up towards the goal, and penalizes for the negative effect
-            elif self.currTemp > self.desiredTemp[tick] and (self.change < 0 or self.change > 0) and self.heatingState == "NotTowardsGoal":
+            elif self.currTemp > self.desiredTemp[tick] + 0.025 and (self.change < 0 or self.change > 0) and self.heatingState == "NotTowardsGoal":
                 if self.change < 0:
                     reward = -d(-self.change)
                 else:
@@ -246,8 +249,9 @@ sim = Sim()
 
 for i in range (0, len(day)):
     if not np.isnan(day[i]):
-        print("Iteration {0} of {1}".format(i, len(day)))
         #if i == 40:
         #   input()
-        reward, state, heatingState = sim._step(i)
-        print(reward, state, heatingState)
+        if(sim.state != "Terminated"):
+            print("Iteration {0} of {1}".format(i, len(day)))
+            reward, state, heatingState = sim._step(i)
+            print(reward, state, heatingState)
