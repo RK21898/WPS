@@ -102,7 +102,7 @@ class Sim(): #receives an action in the form of action = {'start temp' : x, 'des
         electricityUsage = 50
 
         #This print summarises the values that are within the current step.
-        print("Time: ", self.time, "\nStep: ", stepNum, "\nPowerlevel: ", self.powerlevel, "\nStepReward: ", reward, "\nCurrent temperature: ", self.currentTemp, "\Desired temperature: ", self.desiredTemp, "\nEnergy usage: ", electricityUsage, "\nBuffetvat temp: ", bufferValues[2], "\nBuffervat inhoud: ", bufferValues[1], "\nAction: ", action)
+        print("Time: ", self.time, "\nStep: ", stepNum, "\nPowerlevel: ", self.powerlevel, "\nStepReward: ", reward, "\nCurrent temperature: ", self.currentTemp, "Desired temperature: ", self.desiredTemp, "\nEnergy usage: ", electricityUsage, "\nBuffetvat temp: ", bufferValues[2], "\nBuffervat inhoud: ", bufferValues[1], "\nAction: ", action)
 
         #figure out the energy we can use in joule/sec
         #if bm.Buffer.isEmpty:
@@ -113,7 +113,6 @@ class Sim(): #receives an action in the form of action = {'start temp' : x, 'des
     def calculateEnergy(self, stepNum):
         stepTime = (self.energyNeed[stepNum] / self.space_output) #outcome in seconds
         self.fulfilledNeedsData["Iteration {0}".format(stepNum)] = [stepTime] #
-
 
     def _reward(self):
         return rewardM.GetRewards()

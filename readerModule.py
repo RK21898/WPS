@@ -3,7 +3,7 @@ import csv
 import pandas as pd
 
 def OpenTemperatureModel(f): #create data frame from csv with pandas module
-    df=pd.read_csv(f+".csv", names=["Date", "Temperature"],sep=';',parse_dates=[0]) #or:, infer_datetime_format=True)
+    df=pd.read_csv(f+".csv", names=["Date", "Temperature"],sep=';',parse_dates=[0], na_values=" NaN") #or:, infer_datetime_format=True)
     fileDATES=df.values
     #fileDATES=df.T.to_dict().values() #export the data frame to a python dictionary
     return fileDATES #fileDATES #return the dictionary
