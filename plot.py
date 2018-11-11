@@ -5,10 +5,11 @@ import readerModule as rm
 import numpy as np
 import Formulas as f
 
-def DeltaTemperatureGraph(f1, f2, f3):
+def DeltaTemperatureGraph(f1, f2, f3=0,):
     outerdata = rm.OpenTemperatureModel(f1)
     innerdata = rm.OpenTemperatureModel(f2)
-    currdata = rm.OpenTemperatureModel(f3)
+    if f3 == "CurrentInsideTemp":
+        currdata = rm.OpenTemperatureModel(f3)
 
     x_1_axis, x_2_axis, x_3_axis = [], [], []
     y_1_axis, y_2_axis, y_3_axis = [], [], []
@@ -22,17 +23,27 @@ def DeltaTemperatureGraph(f1, f2, f3):
         x_2_axis.append(array[0])
         y_2_axis.append(array[1])
 
-    for array in currdata:
-        x_3_axis.append(array[0])
-        y_3_axis.append(array[1])
+    if f3 == "CurrentInsideTemp":
+        currdata = rm.OpenTemperatureModel(f3)
+        for array in currdata:
+            x_3_axis.append(array[0])
+            y_3_axis.append(array[1])
 
     fig = plt.figure()
     fig.show()  
     ax = fig.add_subplot(111)
 
     ax.plot(x_1_axis, y_1_axis, label="OutsideTemp", fillstyle="none")
-    ax.plot(x_2_axis, y_2_axis, label="InsideTemp", fillstyle="none")
-    ax.plot(x_3_axis, y_3_axis, label="CurrInsideTemp", fillstyle="none", linestyle="dashed")
+    ax.plot(x_2_axis, y_2_axis, label="RequestedInsideTemp", fillstyle="none")
+    if f3 == "CurrentInsideTemp":
+        ax.plot(x_3_axis, y_3_axis, label="CurrentInsideTemp", fillstyle="none", linestyle="dashed")
+    elif f3 == 0:
+        pass
+    else:
+        for array in f3:
+            x_3_axis.append(array[0])
+            y_3_axis.append(array[1])
+        ax.plot(x_3_axis, y_3_axis, label="CurrentInsideTemp", fillstyle="none", linestyle="dashed")
 
     plt.xlabel("Time (hours)")
     plt.gcf().autofmt_xdate()
@@ -72,6 +83,31 @@ def EnergyNeedGraph(f1, f2, action):
     plt.xlabel("Time (hours)")
     plt.gcf().autofmt_xdate()
     plt.ylabel("Energy Need (Q in Joules)")
+    plt.legend(loc=0)
+    plt.draw()
+    plt.show()
+
+def policyGraph(policy):
+    x_axis = []
+    y_1_axis, y_2_axis, y_3_axis = [], [], []
+
+    for array in policy:
+        x_axis.append(array[0])
+        y_1_axis.append(array[1])
+        y_2_axis.append(array[2])
+        y_3_axis.append(array[3])
+    
+    fig = plt.figure()
+    fig.show()
+    ax = fig.add_subplot(111)
+
+    ax.plot(x_axis, y_1_axis, label="tickReward", fillstyle="none")
+    ax.plot(x_axis, y_2_axis, label="tickTemperatureChange", fillstyle="none",linestyle="dashed")
+    ax.plot(x_axis, y_3_axis, label="TotalReward", fillstyle="none")
+
+    plt.xlabel("Time (hours)")
+    plt.gcf().autofmt_xdate()
+    plt.ylabel("Policy Values")
     plt.legend(loc=0)
     plt.draw()
     plt.show()

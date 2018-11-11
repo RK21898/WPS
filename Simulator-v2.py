@@ -43,20 +43,24 @@ def _CalculateSpace(action):
     return action_space
 
 def GetDesiredTemp():
-    #currdata = rm.OpenTemperatureModel("CurrentInsideTemp")
     desireddata = rm.OpenTemperatureModel("InsideRequestTemp")
 
     desiredTemp = []
-    #currTemp, desiredTemp = [], []
-
-    #for array in currdata:
-    #    currTemp.append(array[1])
     
     for array in desireddata:
         desiredTemp.append(array[1])
 
-    return desiredTemp #[currTemp, desiredTemp]
+    return desiredTemp
 
+def GetDays():
+    desireddata = rm.OpenTemperatureModel("InsideRequestTemp")
+
+    days = []
+    
+    for array in desireddata:
+        days.append(array[0])
+
+    return days
 
 class Sim(): #receives an action in the form of action = {'start temp' : x, 'desired temp' : y, 'Space' : [l, b, h, d]}
     """
@@ -95,21 +99,15 @@ class Sim(): #receives an action in the form of action = {'start temp' : x, 'des
 ###VARIABLE SECTION###
 
 ###FUNCTION SECTION###
-    def __init__(self):#, action):
-    #    self.action = action
-    #    self.energyNeed = _CalculateNeeds(self.action)
+    def __init__(self):
         self.state = None
         self.observation_space = [[15,24],
                                   [-.05,.05]]
-    #    self.space_output = f.FloorWarmingPower(self.action_space['surface'])
-    #    self.powerlevel = 0
         self.desiredTemp = GetDesiredTemp() #Get from dataset based on time (userinput values)
         self.currTemp = 16 #Get from dataset based on time (imaginary sensor)
         self.change = round(d(.05),2)
-        self.heatingState = "TowardsGoal"
+        self.heatingState = "UpTowardsGoal"
         self.tick = 0
-    #    self.time = datetime.now()
-    #    self.fulfilledNeedsData = {}
 
     def _step(self, tick):
         if not (np.isnan(self.desiredTemp[tick]) or self.state == "Terminated"):
@@ -118,30 +116,32 @@ class Sim(): #receives an action in the form of action = {'start temp' : x, 'des
             #awards 0 points for heating up towards the goal
             if self.currTemp < self.desiredTemp[tick] - 0.025 and self.change > 0 and self.heatingState == "UpTowardsGoal":
                 reward = 0
-                self.change += d(self.change * d(1.05))
+                self.change += d(self.change * d(0.005))
 
             #awards 0 points for cooling down towards the goal
             elif self.currTemp > self.desiredTemp[tick] + 0.025 and self.change < 0 and self.heatingState == "DownTowardsGoal":
                 reward = 0
-                self.change += d(self.change * d(1.05))
+                self.change -= d(self.change * d(0.005))
             
             #awards 0 points for transitioning into the TowardsGoal states
-            elif (self.currTemp < self.desiredTemp[tick] - 0.025) or (self.currTemp > self.desiredTemp[tick] + 0.025) and (self.change > -0.001 or self.change < 0.001):
+            elif (self.currTemp < self.desiredTemp[tick] - 0.025) or (self.currTemp > self.desiredTemp[tick] + 0.025) and (self.change > -0.001 or self.change < 0.001) and self.heatingState == "NotTowardsGoal":
                 if  (self.currTemp < self.desiredTemp[tick]):
                     self.heatingState = "UpTowardsGoal"
+                    self.change *= -1
                 elif (self.currTemp > self.desiredTemp[tick]):
                     self.heatingState = "DownTowardsGoal"
+                    self.change *= -1
                 reward = 0
             
             #is no longer heating up towards the goal, has however reached the OnGoal critera,
             #but the temperature change is still higher than expected, therefore entering the NotTowardsGoal state and starting penalization
-            elif (self.currTemp > self.desiredTemp[tick] - 0.025 or self.currTemp < self.desiredTemp[tick] + 0.025 ) and (self.change > 0 or self.change < 0):
+            elif (self.currTemp > self.desiredTemp[tick] - 0.025 or self.currTemp < self.desiredTemp[tick] + 0.025 ) and self.heatingState != "NotTowardsGoal":
                 self.heatingState = "NotTowardsGoal"
                 if self.change < 0:
                     reward = -d(-self.change)
                 else:
                     reward = -d(self.change)
-                self.change -= d(self.change * d(0.05))
+                self.change -= d(self.change * d(0.005))
 
             #is no longer cooling down towards the goal, and penalizes for the negative effect
             elif self.currTemp < self.desiredTemp[tick] - 0.025 and (self.change > 0 or self.change < 0) and self.heatingState == "NotTowardsGoal":
@@ -149,7 +149,7 @@ class Sim(): #receives an action in the form of action = {'start temp' : x, 'des
                     reward = -d(-self.change)
                 else:
                     reward = -d(self.change)
-                self.change -= d(self.change * d(0.05))
+                self.change -= d(self.change * d(0.005))
 
             #is no longer heating up towards the goal, and penalizes for the negative effect
             elif self.currTemp > self.desiredTemp[tick] + 0.025 and (self.change < 0 or self.change > 0) and self.heatingState == "NotTowardsGoal":
@@ -157,10 +157,10 @@ class Sim(): #receives an action in the form of action = {'start temp' : x, 'des
                     reward = -d(-self.change)
                 else:
                     reward = -d(self.change)
-                self.change -= d(self.change * d(0.05))
+                self.change -= d(self.change * d(0.005))
             
             #is no longer truly heating up, but staying around the desired temperature, therefore it has reached the OnGoal state
-            elif (self.currTemp > self.desiredTemp[tick] - 0.025 or self.currTemp < self.desiredTemp[tick] + 0.025 ) and (self.change < 0.001 or self.change > -0.001):
+            elif (self.currTemp > self.desiredTemp[tick] - 0.025 or self.currTemp < self.desiredTemp[tick] + 0.025 ) and (self.change < 0.01 or self.change > -0.01):
                 self.heatingState = "OnGoal"
                 reward = d(.02)           
 
@@ -170,37 +170,19 @@ class Sim(): #receives an action in the form of action = {'start temp' : x, 'des
             #terminates when it crosses a boundary and returns necessary information
             if lowerBound > self.currTemp or self.currTemp > upperBound+1:
                 self.state = "Terminated"
-                return reward, self.state, self.heatingState
-            
+                return reward
+
             #hasn't terminated so continues to feed necessary information
             else:
                 self.state = "NoTermination" 
-                return reward, self.state, self.heatingState
-
-    #def calculateEnergy(self, stepNum):
-    #    stepTime = (self.energyNeed[stepNum] / self.space_output) #outcome in seconds
-    #    self.fulfilledNeedsData["Iteration {0}".format(stepNum)] = [stepTime]
-
-    #def _reward(self):
-    #    return rewardM.GetRewards()
+                return reward, self.change
 
     #def policyExport(self):
     #    ...
 
-    #def ai(self, bufferValues):
-    #    """"The ai function does ai functions"""
-    #    #If the step does not pass any extra values onto the AI it has 
-    #    if (bufferValues[0] and bufferValues[1] and bufferValues[2] == None):
-    #        if (bufferValues[3]):
-    #            return 100
-    #        return 50
-
 ###MAIN SECTION###
-
 action = {}
 
-#startingTemp = float(input("Starting Temperature of room: "))
-#desiredTemp = float(input("Desired Temperature of room: "))
 startHours = [0, 6, 9, 12, 15, 18, 21]
 endHours = [6, 9, 12, 15, 18, 21, 23]
 wantedTemps = [-3, -2, 0, 1, -1, -2, -3]
@@ -211,47 +193,23 @@ endHours = [6, 8, 16, 18, 22, 23]
 wantedTemps = [18, 20, 18, 20, 21, 18]
 v.createCSV(startHours,endHours,wantedTemps,'InsideRequestTemp')
 
-
-#action["Action"] = input("Type the number for the option you choose, 1: Heat water, 2: Heat room: ")
-#
-#if action["Action"] == '1':
-#    action["Desired Temp"] = float(input("Desired temperature inside buffer: "))
-#    
-#    sim = Sim(action)
-#
-#    #make loop so it keeps doing step until complete
-#    sim._step(action)
-#
-#elif action["Action"] == '2':
-#    l = float(input("Length of room (in meters): "))
-#    b = float(input("Width of room (in meters): "))
-#    h = float(input("Height of room (in meters): "))
-#    d = float(input("Depth of floor (in centimeters): ")) / 100
-#
-#    #action['StartingTemp'] = startingTemp
-#    #action['DesiredTemp'] = desiredTemp
-#    action['Space'] = [l,b,h,d] 
-#
-#    p.DeltaTemperatureGraph("OutsideTemp","InsideRequestTemp","CurrentInsideTemp")
-#    p.EnergyNeedGraph("OutsideTemp","InsideRequestTemp",action)
-#
-#    sim = Sim(action)
-#
-#    for i in range(0, len(sim.energyNeed)):
-#        sim._step(action, i)
-#
-#    print(sim.fulfilledNeedsData)
-#    print(sim.energyNeed)
-
 day = GetDesiredTemp()
+dates = GetDays()
 
 sim = Sim()
 
+graphvalues = []
+policy = []
+total_reward = 0
+
 for i in range (0, len(day)):
     if not np.isnan(day[i]):
-        #if i == 40:
-        #   input()
         if(sim.state != "Terminated"):
-            print("Iteration {0} of {1}".format(i, len(day)))
-            reward, state, heatingState = sim._step(i)
-            print(reward, state, heatingState)
+            reward, change = sim._step(i)
+            graphvalues.append([dates[i], sim.currTemp])
+            print(reward)
+            total_reward += reward
+            policy.append([dates[i], reward, change, total_reward])
+
+p.DeltaTemperatureGraph("OutsideTemp","InsideRequestTemp",graphvalues)
+p.policyGraph(policy)
